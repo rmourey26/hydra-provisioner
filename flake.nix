@@ -1,10 +1,20 @@
 {
   description = "Hydra Provisioner";
 
-  outputs = { self, nixpkgs }: {
+  inputs.utils.url = "github:kreisys/flake-utils";
 
-    packages.x86_64-linux.hydra-provisioner = nixpkgs.legacyPackages.x86_64-linux.callPackage self {};
+  outputs = { self, nixpkgs, utils, ... }:
+    utils.lib.simpleFlake {
+      inherit nixpkgs;
+      systems = [ "x86_64-linux" ];
 
-    defaultPackage.x86_64-linux = self.packages.x86_64-linux.hydra-provisioner;
-  };
+      overlay = final: prev: {
+        hydra-provisioner = final.callPackage self {};
+      };
+
+      packages = { hydra-provisioner }: {
+        defaultPackage = hydra-provisioner;
+        inherit hydra-provisioner;
+      };
+    };
 }
