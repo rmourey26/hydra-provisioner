@@ -1,15 +1,18 @@
-{ pkgs ? import <nixpkgs> {}
-, nixops ? pkgs.nixops
+{ nixopsUnstable 
+, stdenv
+, nixUnstable
 }:
-
-with pkgs;
 
 stdenv.mkDerivation {
   name = "hydra-provisioner";
 
-  buildInputs = with python2Packages; [ wrapPython python nixops ];
+  buildInputs = [
+    nixopsUnstable.python.pkgs.wrapPython
+    nixopsUnstable.python
+    nixopsUnstable
+  ];
 
-  pythonPath = [ nixops nixUnstable ] ++ nixops.pythonPath;
+  pythonPath = [ nixopsUnstable nixUnstable ];
 
   unpackPhase = "true";
   buildPhase = "true";

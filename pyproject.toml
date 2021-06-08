@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "hydra-provisioner"
+version = "0.1.0"
+description = ""
+authors = ["Shay Bergmann <shay.bergmann@iohk.io>"]
+include = ["nix/*.nix"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+nixops = {git = "https://github.com/NixOS/nixops.git"}
+nixops-encrypted-links = {git = "https://github.com/nix-community/nixops-encrypted-links.git"}
+nixops-aws = {git = "https://github.com/NixOS/nixops-aws.git"}
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+hydra-provisioner = 'hydra_provisioner.__main__:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
