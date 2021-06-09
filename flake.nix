@@ -13,6 +13,11 @@
         meta.mainProgram = "hydra-provisioner";
 
         projectDir = ./.;
+
+        postInstall = ''
+          mkdir -p $out/share/nix/hydra-provisioner
+          cp ${./nix/auto-shutdown.nix} $_/auto-shutdown.nix
+        '';
       };
     };
 
