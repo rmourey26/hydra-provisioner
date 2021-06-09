@@ -2,23 +2,29 @@
 
 let
   cfg = config.services.hydra.provisioner;
-
+  inherit (config.users.users.hydra-provisioner) home;
 in
 
 {
-  options.services.hydra.provisioner = {
-    enable = lib.mkEnableOption "Hydra Provisioner";
+  options.services.hydra.provisioner = with lib; with types; {
+    enable = mkEnableOption "Hydra Provisioner";
 
-    package = lib.mkOption {
-      type = lib.types.package;
+    package = mkOption {
+      type = package;
       default = pkgs.hydra-provisioner;
       description = "Hydra provisioner package to use";
+    };
+
+    extraConfig = mkOption {
+      type = str;
+      description = "Hydra provisioner configuration";
+      example = builtins.readFile ./examples/conf.nix;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    users.extraUsers.hydra-provisioner =
-      { description = "Hydra provisioner";
+    users.extraUsers.hydra-provisioner = {
+      description = "Hydra provisioner";
       group = "hydra";
       home = "/var/lib/hydra-provisioner";
       useDefaultShell = true;
@@ -28,8 +34,8 @@ in
     system.activationScripts.hydra-provisioner = lib.stringAfter [ "users" ]
     ''
       mkdir -m 0755 -p /var/lib/hydra/provisioner
-      mkdir -m 0700 -p /var/lib/hydra-provisioner
-      chown hydra-provisioner.hydra /var/lib/hydra-provisioner /var/lib/hydra/provisioner
+      mkdir -m 0700 -p ${home}
+      chown hydra-provisioner.hydra ${home} /var/lib/hydra/provisioner
     '';
 
     environment.systemPackages = with pkgs;
@@ -40,30 +46,31 @@ in
     ];
 
   # FIXME: restrict PostgreSQL access.
-  services.postgresql.identMap =
-    ''
-      hydra-users hydra-provisioner hydra
+  services.postgresql.identMap = ''
+    hydra-users hydra-provisioner hydra
+  '';
+
+  services.hydra.buildMachinesFiles = [
+    "/etc/nix/machines"
+    "/var/lib/hydra/provisioner/machines"
+  ];
+
+  systemd.services.hydra-provisioner = {
+    script = ''
+        source /etc/profile
+        while true; do
+          timeout 3600 ${cfg.package}/bin/hydra-provisioner ${pkgs.writeText "conf.nix" cfg.extraConfig}
+          sleep 300
+        done
     '';
 
-    services.hydra.buildMachinesFiles =
-      [ "/etc/nix/machines" "/var/lib/hydra/provisioner/machines" ];
+    serviceConfig = {
+      User = "hydra-provisioner";
+      Restart = "always";
+      RestartSec = 60;
+    };
+  };
 
-      systemd.services.hydra-provisioner =
-        { script =
-          ''
-          source /etc/profile
-          while true; do
-          timeout 3600 ${cfg.package}/bin/hydra-provisioner /var/lib/hydra-provisioner/nixos-org-configurations/hydra-provisioner/conf.nix
-          sleep 300
-          done
-          '';
-          serviceConfig.User = "hydra-provisioner";
-          serviceConfig.Restart = "always";
-          serviceConfig.RestartSec = 60;
-        };
-
-        nix.nixPath = [ "${cfg.package}/share/nix" ];
-      };
-
-    }
-
+  nix.nixPath = [ "${cfg.package}/share/nix" ];
+};
+}
