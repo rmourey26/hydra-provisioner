@@ -56,8 +56,8 @@ in
   ];
 
   systemd.services.hydra-provisioner = {
-    wantedBy = [ "hydra-queue-runner" ];
-    after    = [ "hydra-queue-runner" ];
+    wantedBy = [ "hydra-queue-runner.service" ];
+    after    = [ "hydra-queue-runner.service" ];
 
     script = ''
         source /etc/profile
