@@ -19,7 +19,7 @@ if not os.path.exists(own_modules):
 def log(s):
     sys.stderr.write(s + "\n")
 
-def get_new_deployment_name(prefix):
+def get_new_deployment_name(prefix, depls):
     """Generate a unique NixOps deployment name with the given prefix."""
     names = {depl.name for depl in depls}
     i = 0
@@ -124,7 +124,7 @@ def main() -> None:
             if len(existing) == 0:
                 # Create a new machine.
                 # FIXME: make this transactional.
-                name = get_new_deployment_name(tag)
+                name = get_new_deployment_name(tag, depls)
 
                 depl = sf.create_deployment()
                 depl.name = name
