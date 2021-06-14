@@ -231,7 +231,7 @@ def main() -> None:
             depl.extra_nix_path.append("hydra-provisioner=" + own_modules)
             try:
                 depl.deploy(check=True)
-                depl.machines["machine"].ssh.run_command(["touch", "/run/keep-alive"])
+                depl.machines["machine"].ssh.run_command(["touch", "/run/keep-alive"], "root")
                 deployed.add(depl)
             except Exception as e:
                 log("error deploying ‘{0}’: {1}".format(depl.name, e))
