@@ -45,35 +45,34 @@ in
       awscli
     ];
 
-  # FIXME: restrict PostgreSQL access.
-  services.postgresql.identMap = ''
-    hydra-users hydra-provisioner hydra
-  '';
-
-  services.hydra.buildMachinesFiles = [
-    "/etc/nix/machines"
-    "/var/lib/hydra/provisioner/machines"
-  ];
-
-  systemd.services.hydra-provisioner = {
-    wantedBy = [ "hydra-queue-runner.service" ];
-    after    = [ "hydra-queue-runner.service" ];
-
-    script = ''
-        source /etc/profile
-        while true; do
-          timeout 3600 ${cfg.package}/bin/hydra-provisioner ${pkgs.writeText "conf.nix" cfg.extraConfig}
-          sleep 300
-        done
+    # FIXME: restrict PostgreSQL access.
+    services.postgresql.identMap = ''
+      hydra-users hydra-provisioner hydra
     '';
 
-    serviceConfig = {
-      User = "hydra-provisioner";
-      Restart = "always";
-      RestartSec = 60;
-    };
-  };
+    services.hydra.buildMachinesFiles = [
+      "/var/lib/hydra/provisioner/machines"
+    ];
 
-  nix.nixPath = [ "${cfg.package}/share/nix" ];
-};
+    systemd.services.hydra-provisioner = {
+      wantedBy = [ "hydra-queue-runner.service" ];
+      after    = [ "hydra-queue-runner.service" ];
+
+      script = ''
+          source /etc/profile
+          while true; do
+            timeout 3600 ${cfg.package}/bin/hydra-provisioner ${pkgs.writeText "conf.nix" cfg.extraConfig}
+            sleep 300
+          done
+      '';
+
+      serviceConfig = {
+        User = "hydra-provisioner";
+        Restart = "always";
+        RestartSec = 60;
+      };
+    };
+
+    nix.nixPath = [ "${cfg.package}/share/nix" ];
+  };
 }
