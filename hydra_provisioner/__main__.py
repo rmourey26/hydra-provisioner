@@ -12,6 +12,10 @@ import sys
 import tempfile
 import time
 
+from nixops.plugins.manager import PluginManager
+
+PluginManager.load()
+
 own_modules = os.path.realpath(os.path.dirname(__file__) + "/../share/nix/hydra-provisioner")
 if not os.path.exists(own_modules):
     own_modules = os.path.dirname(__file__)
