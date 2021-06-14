@@ -264,7 +264,7 @@ def main() -> None:
             str(type_config.get("speedFactor", 1)),
             ",".join(features_list) if features_list else "-",
             ",".join(features_list) if features_list else "-",
-            base64.b64encode(m.public_host_key) if m.public_host_key else "-"
+            base64.b64encode(m.public_host_key.encode()).decode() if m.public_host_key else "-"
         ]
 
         assert(all(c != "" for c in columns))
