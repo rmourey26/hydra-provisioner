@@ -41,19 +41,6 @@ with types;
         the listed features will be executed on the machines created here.
       '';
       type = attrsOf (submodule (import ./system-type.nix));
-      default = {
-        x86_64-linux = {
-          nixopsExpr = "${./example/deployment.nix}";
-          nixPath = [ "nixpkgs=channel:nixos-21.05-small" ];
-          minMachines = 1;
-          maxMachines = 1;
-          ignoredRunnables = 0;
-          runnablesPerMachine = 10;
-          maxJobs = 4;
-          # sshKey = "/var/lib/hydra/queue-runner/.ssh/id_buildfarm_rsa";
-          sshKey = "/etc/nix/id_buildfarm";
-        };
-      };
     };
   };
 }
