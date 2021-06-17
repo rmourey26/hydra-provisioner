@@ -71,7 +71,7 @@ in
           while true; do
             timeout 3600 ${cfg.package}/bin/hydra-provisioner ${pkgs.writeText "conf.nix" ''
               with builtins;
-              fromJSON (readFile ${pkgs.writeText "conf.json" (builtins.toJSON cfg.config.config)})
+              fromJSON (readFile ${pkgs.writeText "conf.json" (builtins.toJSON cfg.config)})
             ''}
             sleep 300
           done
