@@ -275,7 +275,7 @@ def main() -> None:
     update_command = config.get("updateCommand", None)
     if update_command:
         machines_tmp = tempfile.NamedTemporaryFile()
-        machines_tmp.write(machines_file)
+        machines_tmp.write(machines_file.encode())
         machines_tmp.seek(0)
         subprocess.check_call(update_command, stdin=machines_tmp)
     else:
