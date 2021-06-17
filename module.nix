@@ -3,11 +3,18 @@
 let
   cfg = config.services.hydra.provisioner;
   inherit (config.users.users.hydra-provisioner) home;
+
 in
 
 {
   options.services.hydra.provisioner = with lib; with types; {
     enable = mkEnableOption "Hydra Provisioner";
+
+    extraConfig = mkOption {
+      type = str;
+      description = "Hydra provisioner configuration";
+      example = "builtins.readFile ./examples/conf.nix";
+    };
 
     package = mkOption {
       type = package;
@@ -15,16 +22,17 @@ in
       description = "Hydra provisioner package to use";
     };
 
-    extraConfig = mkOption {
-      type = str;
-      description = "Hydra provisioner configuration";
-      example = builtins.readFile ./examples/conf.nix;
+    config = mkOption {
+      type = submodule (import ./config-type.nix);
+      description = ''
+        Hydra Provisioner configuration
+      '';
     };
   };
 
   config = lib.mkIf cfg.enable {
     users.extraUsers.hydra-provisioner = {
-      description = "Hydra provisioner";
+      description = "Hydra Provisioner";
       group = "hydra";
       home = "/var/lib/hydra-provisioner";
       useDefaultShell = true;
@@ -61,7 +69,10 @@ in
       script = ''
           source /etc/profile
           while true; do
-            timeout 3600 ${cfg.package}/bin/hydra-provisioner ${pkgs.writeText "conf.nix" cfg.extraConfig}
+            timeout 3600 ${cfg.package}/bin/hydra-provisioner ${pkgs.writeText "conf.nix" ''
+              with builtins;
+              fromJSON (readFile ${pkgs.writeText "conf.json" (builtins.toJSON cfg.config.config)})
+            ''}
             sleep 300
           done
       '';
