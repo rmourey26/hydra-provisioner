@@ -31,12 +31,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    users.extraUsers.hydra-provisioner = {
+    users.users.hydra-provisioner = {
       description = "Hydra Provisioner";
       group = "hydra";
       home = "/var/lib/hydra-provisioner";
       useDefaultShell = true;
       createHome = true;
+      isSystemUser = true;
     };
 
     system.activationScripts.hydra-provisioner = lib.stringAfter [ "users" ]
