@@ -54,7 +54,7 @@ in
 
     environment.systemPackages = with pkgs;
     [
-      hydra-provisioner
+      cfg.package
       nixops
       awscli
     ];
