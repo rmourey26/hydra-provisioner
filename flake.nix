@@ -11,6 +11,7 @@
 
     overlay = final: prev: {
       hydra-provisioner = final.poetry2nix.mkPoetryApplication {
+        requiredSystemFeatures = [ "big-parallel" ];
         meta.mainProgram = "hydra-provisioner";
 
         projectDir = ./.;
