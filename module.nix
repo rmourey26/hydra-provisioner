@@ -52,13 +52,6 @@ in
       chown hydra-provisioner.hydra ${home} /var/lib/hydra/provisioner
     '';
 
-    environment.systemPackages = with pkgs;
-    [
-      cfg.package
-      nixops
-      awscli
-    ];
-
     # FIXME: restrict PostgreSQL access.
     services.postgresql.identMap = ''
       hydra-users hydra-provisioner hydra
