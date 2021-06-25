@@ -49,7 +49,7 @@ in
     ''
       mkdir -m 0755 -p /var/lib/hydra/provisioner
       mkdir -m 0700 -p ${home}
-      chown hydra-provisioner.hydra ${home} /var/lib/hydra/provisioner
+      chown -R hydra-provisioner.hydra ${home} /var/lib/hydra/provisioner
     '';
 
     # FIXME: restrict PostgreSQL access.
