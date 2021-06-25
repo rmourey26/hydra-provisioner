@@ -2,6 +2,7 @@
   description = "Hydra Provisioner";
 
   inputs.utils.url = "github:kreisys/flake-utils";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
   outputs = { self, nixpkgs, utils, ... }:
   utils.lib.simpleFlake {
@@ -29,7 +30,8 @@
     nixosModules = {
       hydra-provisioner = import ./module.nix;
       overlay = { nixpkgs.overlays = [ self.overlay ]; };
-      default.imports = with self.nixosModules; [ overlay hydra-provisioner ];
     };
+
+    extraOutputs.nixosModule.imports = with self.nixosModules; [ overlay hydra-provisioner ];
   };
 }
