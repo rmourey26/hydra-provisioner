@@ -23,6 +23,8 @@
       };
     };
 
+    hydraJobs = { hydra-provisioner }@jobs: jobs;
+
     packages = { hydra-provisioner }: {
       defaultPackage = hydra-provisioner;
       inherit hydra-provisioner;
