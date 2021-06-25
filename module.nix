@@ -10,10 +10,15 @@ in
   options.services.hydra.provisioner = with lib; with types; {
     enable = mkEnableOption "Hydra Provisioner";
 
-    extraConfig = mkOption {
-      type = str;
-      description = "Hydra provisioner configuration";
-      example = "builtins.readFile ./examples/conf.nix";
+    useFlakeOverlay = mkOption {
+      type = bool;
+      default = true;
+      description = ''
+        when `true`, the flake's overlay will be applied to `nixpkgs.overlays`
+        and the default package would be `pkgs.hydra-provisioner`.
+        when `false`, the package would default to the flake's
+        `packages.x86_64-linux.hydra-provisioner` instead.
+      '';
     };
 
     package = mkOption {

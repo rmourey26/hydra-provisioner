@@ -27,11 +27,20 @@
       inherit hydra-provisioner;
     };
 
-    nixosModules = {
-      hydra-provisioner = import ./module.nix;
-      overlay = { nixpkgs.overlays = [ self.overlay ]; };
-    };
+    extraOutputs.nixosModule = { lib, config, ... }: let
+      cfg = config.services.hydra.provisioner;
+    in {
+      imports = [ ./module.nix ];
 
-    extraOutputs.nixosModule.imports = with self.nixosModules; [ overlay hydra-provisioner ];
+      config = with lib; {
+        nixpkgs = mkIf cfg.useFlakeOverlay {
+          overlays = [ self.overlay ];
+        };
+
+        services.hydra.provisioner = mkIf (!cfg.useFlakeOverlay) {
+          package = self.defaultPackage.x86_64-linux;
+        };
+      };
+    };
   };
 }
