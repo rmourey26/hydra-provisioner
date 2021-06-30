@@ -27,7 +27,7 @@
       inherit hydra-provisioner;
     };
 
-    extraOutputs.nixosModule = { lib, config, ... }: let
+    nixosModule = { lib, config, ... }: let
       cfg = config.services.hydra.provisioner;
     in {
       imports = [ ./module.nix ];
