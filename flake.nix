@@ -1,7 +1,7 @@
 {
   description = "Hydra Provisioner";
 
-  inputs.utils.url = "github:kreisys/flake-utils";
+  inputs.utils.url = "github:rmourey26/flake-utils";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
   outputs = { self, nixpkgs, utils, ... }:
